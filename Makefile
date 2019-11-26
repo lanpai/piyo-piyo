@@ -31,7 +31,7 @@ else
 		ifneq ($(WAYLAND_DISPLAY),)
 			CCFLAGS += -D__WAYLAND
 		else
-			LIB += -lxcb
+			LIB += -lX11 -lGLX -lGL
 		endif
 	else ifeq ($(UNAME_S),Darwin)
 

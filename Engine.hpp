@@ -4,16 +4,20 @@
 
 #include <vector>
 
-class Engine {
-    public:
-        ~Engine();
+namespace piyo {
+    class Engine {
+        public:
+            ~Engine();
 
-        void Run();
+            void Run();
 
-        void AddComponent(Component *component);
+            void AddComponent(Component *component);
 
-    private:
-        bool _shouldRun;
+        private:
+            bool _shouldRun;
 
-        std::vector<Component *> _components;
-};
+            std::vector<Component *> _components;
+
+            int _windowCount = 0;
+    };
+}

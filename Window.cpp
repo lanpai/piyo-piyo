@@ -2,7 +2,6 @@
 
 #if defined(__WAYLAND)
 #elif defined(__linux__)
-#include <xcb/xproto.h>
 #elif defined(_WIN32)
 #elif defined(__APPLE__)
 #else
@@ -11,70 +10,103 @@
 
 #include <cstdio>
 
-Window::Window(std::string windowName, int width, int height)
-    : Component("Window", ComponentType::WINDOW)
-    , _windowName(windowName)
-    , _width(width)
-    , _height(height) {
-    // void
-}
+namespace piyo {
+    Window::Window(std::string windowName, int width, int height)
+        : Component("Window", ComponentType::WINDOW)
+        , _windowName(windowName)
+        , _width(width)
+        , _height(height) {
+        // void
+    }
 
-Window::~Window() {
+    Window::~Window() {
 #if defined(__WAYLAND)
 #elif defined(__linux__)
-    xcb_disconnect(this->xcbConnection);
 #elif defined(_WIN32)
 #elif defined(__APPLE__)
 #endif
-}
+    }
 
-void Window::OnInit() {
-    std::printf("Initializing %s...\n", this->_name.c_str());
+    void Window::OnInit() {
+        std::printf("Initializing %s...\n", this->_name.c_str());
 
 #if defined(__WAYLAND)
-    this->_display = DisplayType::WAYLAND;
+        this->_display = DisplayType::WAYLAND;
 #elif defined(__linux__)
-    this->_display = DisplayType::X11;
+        this->_display = DisplayType::X11;
 
-    // Connecting to X server
-    this->xcbConnection = xcb_connect(NULL, NULL);
+        // Fetching X display
+        this->_xDisplay = XOpenDisplay(0);
+        if (this->_xDisplay == NULL) {
+            std::printf("Could not connect to X server\n");
+            exit(0);
+        }
 
-    // Fetching the first screen
-    this->xcbScreen = xcb_setup_roots_iterator(xcb_get_setup(this->xcbConnection)).data;
+        // Fetching the root window
+        ::Window root = DefaultRootWindow(this->_xDisplay);
 
-    // Creating the window
-    this->xcbWindow = xcb_generate_id(this->xcbConnection);
-    xcb_create_window(
-            this->xcbConnection,
-            XCB_COPY_FROM_PARENT,
-            this->xcbWindow,
-            this->xcbScreen->root,
-            0, 0,
-            this->_width, this->_height,
-            10,
-            XCB_WINDOW_CLASS_INPUT_OUTPUT,
-            this->xcbScreen->root_visual,
-            0, NULL);
+        XVisualInfo *visualInfo;
+        GLint attr[] = { GLX_RGBA, GLX_DOUBLEBUFFER, None };
+        visualInfo = glXChooseVisual(this->_xDisplay, 0, attr);
+        if (visualInfo == NULL) {
+            std::printf("No appropriate visual found\n");
+            exit(0);
+        }
 
-    // Mapping the window to the screen
-    xcb_map_window(this->xcbConnection, this->xcbWindow);
+        // Setting window attributes
+        XSetWindowAttributes setWinAttr;
+        setWinAttr.colormap = XCreateColormap(this->_xDisplay, root, visualInfo->visual, AllocNone);
+        setWinAttr.event_mask = ExposureMask | KeyPressMask;
 
-    // Set title
-    xcb_change_property(
-            this->xcbConnection,
-            XCB_PROP_MODE_REPLACE,
-            this->xcbWindow,
-            XCB_ATOM_WM_NAME,
-            XCB_ATOM_STRING,
-            8,
-            this->_windowName.length(),
-            this->_windowName.c_str());
+        // Creating the window
+        this->_xWindow = XCreateWindow(
+                this->_xDisplay,
+                root,
+                0, 0,
+                this->_width, this->_height,
+                0,
+                visualInfo->depth,
+                InputOutput,
+                visualInfo->visual,
+                CWColormap | CWEventMask,
+                &setWinAttr
+                );
 
-    // Flush X server
-    xcb_flush(this->xcbConnection);
+        // Setting title
+        XStoreName(this->_xDisplay, this->_xWindow, this->_windowName.c_str());
+
+        // Creating OpenGL context
+        this->_xContext = glXCreateContext(this->_xDisplay, visualInfo, NULL, GL_TRUE);
+        if (this->_xContext == NULL) {
+            std::printf("Failed to create rendering context\n");
+            exit(0);
+        }
+
+        // Mapping the window and enabling the context
+        XMapWindow(this->_xDisplay, this->_xWindow);
+        this->MakeContextCurrent();
 #elif defined(_WIN32)
-    this->_display = DisplayType::WIN;
+        this->_display = DisplayType::WIN;
 #elif defined(__APPLE__)
-    this->_display = DisplayType::DARWIN;
+        this->_display = DisplayType::DARWIN;
 #endif
+    }
+
+    void Window::SwapBuffers() {
+#if defined(__WAYLAND)
+#elif defined(__linux__)
+        glXSwapBuffers(this->_xDisplay, this->_xWindow);
+#elif defined(_WIN32)
+#elif defined(__APPLE__)
+#endif
+    }
+
+    void Window::MakeContextCurrent() {
+#if defined(__WAYLAND)
+#elif defined(__linux__)
+        glXMakeCurrent(this->_xDisplay, this->_xWindow, this->_xContext);
+#elif defined(_WIN32)
+#elif defined(__APPLE__)
+#endif
+    }
 }
