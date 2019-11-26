@@ -29,6 +29,7 @@ namespace piyo {
 
             virtual void OnInit() override;
 
+            void Clear(float r, float g, float b, float a);
             void SwapBuffers();
             void MakeContextCurrent();
 

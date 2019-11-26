@@ -30,19 +30,18 @@ namespace piyo {
                 component->OnPostUpdate();
 
             // Drawing
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            for (Component *component : this->_components)
+            for (Component *component : this->_components) {
+                if (component->GetType() == ComponentType::WINDOW)
+                    static_cast<Window *>(component)->Clear(0.0f, 0.0f, 0.0f, 1.0f);
                 component->OnPreDraw();
+            }
 
             // Draw current scene here
 
             for (Component *component : this->_components) {
                 component->OnPostDraw();
-                if (component->GetType() == ComponentType::WINDOW) {
+                if (component->GetType() == ComponentType::WINDOW)
                     static_cast<Window *>(component)->SwapBuffers();
-                }
             }
         }
     }

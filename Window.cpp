@@ -92,6 +92,16 @@ namespace piyo {
 #endif
     }
 
+    void Window::Clear(float r, float g, float b, float a) {
+#if defined(__WAYLAND)
+#elif defined(__linux__)
+        glClearColor(r, g, b, a);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#elif defined(_WIN32)
+#elif defined(__APPLE__)
+#endif
+    }
+
     void Window::SwapBuffers() {
 #if defined(__WAYLAND)
 #elif defined(__linux__)
