@@ -25,9 +25,10 @@ namespace piyo {
     class Window : public Component {
         public:
             Window(std::string windowName, int width, int height);
-            ~Window();
 
             virtual void OnInit() override;
+            virtual void OnDestroy() override;
+            virtual void OnPreUpdate() override;
 
             void Clear(float r, float g, float b, float a);
             void SwapBuffers();

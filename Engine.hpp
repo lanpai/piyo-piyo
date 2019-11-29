@@ -3,6 +3,7 @@
 #include "Component.hpp"
 
 #include <vector>
+#include <map>
 
 namespace piyo {
     class Engine {
@@ -12,11 +13,12 @@ namespace piyo {
             void Run();
 
             void AddComponent(Component *component);
+            void RemoveComponent(unsigned int id);
 
         private:
             bool _shouldRun;
 
-            std::vector<Component *> _components;
+            std::map<unsigned int, Component *> _components;
 
             int _windowCount = 0;
     };

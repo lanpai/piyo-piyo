@@ -10,6 +10,8 @@
 
 #include <cstdio>
 
+#include "Engine.hpp"
+
 namespace piyo {
     Window::Window(std::string windowName, int width, int height)
         : Component("Window", ComponentType::WINDOW)
@@ -17,14 +19,6 @@ namespace piyo {
         , _width(width)
         , _height(height) {
         // void
-    }
-
-    Window::~Window() {
-#if defined(__WAYLAND)
-#elif defined(__linux__)
-#elif defined(_WIN32)
-#elif defined(__APPLE__)
-#endif
     }
 
     void Window::OnInit() {
@@ -36,7 +30,7 @@ namespace piyo {
         this->_display = DisplayType::X11;
 
         // Fetching X display
-        this->_xDisplay = XOpenDisplay(0);
+        this->_xDisplay = XOpenDisplay(NULL);
         if (this->_xDisplay == NULL) {
             std::printf("Could not connect to X server\n");
             exit(0);
@@ -56,7 +50,7 @@ namespace piyo {
         // Setting window attributes
         XSetWindowAttributes setWinAttr;
         setWinAttr.colormap = XCreateColormap(this->_xDisplay, root, visualInfo->visual, AllocNone);
-        setWinAttr.event_mask = ExposureMask | KeyPressMask;
+        setWinAttr.event_mask = ExposureMask | KeyPressMask | PointerMotionMask;
 
         // Creating the window
         this->_xWindow = XCreateWindow(
@@ -75,6 +69,10 @@ namespace piyo {
         // Setting title
         XStoreName(this->_xDisplay, this->_xWindow, this->_windowName.c_str());
 
+        // Setting WM protocol detection
+        Atom wmDelete = XInternAtom(this->_xDisplay, "WM_DELETE_WINDOW", true);
+        XSetWMProtocols(this->_xDisplay, this->_xWindow, &wmDelete, 1);
+
         // Creating OpenGL context
         this->_xContext = glXCreateContext(this->_xDisplay, visualInfo, NULL, GL_TRUE);
         if (this->_xContext == NULL) {
@@ -89,6 +87,40 @@ namespace piyo {
         this->_display = DisplayType::WIN;
 #elif defined(__APPLE__)
         this->_display = DisplayType::DARWIN;
+#endif
+    }
+
+    void Window::OnDestroy() {
+#if defined(__WAYLAND)
+#elif defined(__linux__)
+        glXDestroyContext(this->_xDisplay, this->_xContext);
+        XUnmapWindow(this->_xDisplay, this->_xWindow);
+        XDestroyWindow(this->_xDisplay, this->_xWindow);
+#elif defined(_WIN32)
+#elif defined(__APPLE__)
+#endif
+
+        this->_parent->RemoveComponent(this->_id);
+    }
+
+    void Window::OnPreUpdate() {
+#if defined(__WAYLAND)
+#elif defined(__linux__)
+        XEvent xEvent;
+        while (XPending(this->_xDisplay)) {
+            XNextEvent(this->_xDisplay, &xEvent);
+            switch (xEvent.type) {
+                case ClientMessage:
+                    // Detected WM_DELETE_WINDOW
+                    std::printf("on destroy\n");
+                    this->OnDestroy();
+                    return;
+                default:
+                    break;
+            }
+        }
+#elif defined(_WIN32)
+#elif defined(__APPLE__)
 #endif
     }
 

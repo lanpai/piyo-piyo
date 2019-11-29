@@ -20,7 +20,7 @@ endif
 
 BINARY := piyo-piyo
 HEADER_DIR := piyo-piyo
-OBJS := Window.o Engine.o main.o
+OBJS := Component.o Window.o Engine.o main.o
 OBJS_C :=
 
 ifeq ($(OS),Windows_NT)
