@@ -19,6 +19,7 @@ namespace piyo {
             void SetParent(Engine *parent, unsigned int id);
 
             const std::string& ToString() const { return this->_name; };
+            unsigned int GetID() const { return this->_id; };
             ComponentType GetType() const { return this->_type; };
 
         protected:

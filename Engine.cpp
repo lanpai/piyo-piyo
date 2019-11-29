@@ -33,7 +33,7 @@ namespace piyo {
             for (std::pair<unsigned int, Component *> pair : this->_components) {
                 if (pair.second->GetType() == ComponentType::WINDOW) {
                     static_cast<Window *>(pair.second)->MakeContextCurrent();
-                    static_cast<Window *>(pair.second)->Clear(0.0f, 1.0f, 0.0f, 1.0f);
+                    static_cast<Window *>(pair.second)->Clear(0.0f, pair.second->GetID(), 0.0f, 1.0f);
                 }
                 pair.second->OnPreDraw();
             }
