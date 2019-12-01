@@ -29,6 +29,8 @@ namespace piyo {
             virtual void OnInit() override;
             virtual void OnDestroy() override;
             virtual void OnPreUpdate() override;
+            virtual void OnPreDraw() override;
+            virtual void OnPostDraw() override;
 
             void Clear(float r, float g, float b, float a);
             void SwapBuffers();

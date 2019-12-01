@@ -20,32 +20,25 @@ namespace piyo {
         this->_shouldRun = true;
         std::printf("window count: %d\n", this->_windowCount);
         while (this->_shouldRun && this->_windowCount != 0) {
-            // Updating
+            // Pre Update
             for (std::pair<unsigned int, Component *> pair : this->_components)
                 pair.second->OnPreUpdate();
 
             // Update current scene here
 
+            // Post Update
             for (std::pair<unsigned int, Component *> pair : this->_components)
                 pair.second->OnPostUpdate();
 
-            // Drawing
-            for (std::pair<unsigned int, Component *> pair : this->_components) {
-                if (pair.second->GetType() == ComponentType::WINDOW) {
-                    static_cast<Window *>(pair.second)->MakeContextCurrent();
-                    static_cast<Window *>(pair.second)->Clear(0.0f, pair.second->GetID(), 0.0f, 1.0f);
-                }
+            // Pre Draw
+            for (std::pair<unsigned int, Component *> pair : this->_components)
                 pair.second->OnPreDraw();
-            }
 
             // Draw current scene here
 
-            for (std::pair<unsigned int, Component *> pair : this->_components) {
+            // Post Draw
+            for (std::pair<unsigned int, Component *> pair : this->_components)
                 pair.second->OnPostDraw();
-                if (pair.second->GetType() == ComponentType::WINDOW)
-                    static_cast<Window *>(pair.second)->MakeContextCurrent();
-                    static_cast<Window *>(pair.second)->SwapBuffers();
-            }
         }
     }
 

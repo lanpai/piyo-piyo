@@ -124,6 +124,16 @@ namespace piyo {
 #endif
     }
 
+    void Window::OnPreDraw() {
+        this->MakeContextCurrent();
+        this->Clear(0.0f, 1.0f, 0.0f, 1.0f);
+    }
+
+    void Window::OnPostDraw() {
+        this->MakeContextCurrent();
+        this->SwapBuffers();
+    }
+
     void Window::Clear(float r, float g, float b, float a) {
 #if defined(__WAYLAND)
 #elif defined(__linux__)
