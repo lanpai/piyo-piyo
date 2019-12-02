@@ -2,7 +2,6 @@
 
 #include "Component.hpp"
 
-#include <vector>
 #include <map>
 
 namespace piyo {
