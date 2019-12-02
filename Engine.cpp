@@ -1,14 +1,6 @@
 #include "Engine.hpp"
 
-#include <chrono>
-#include <thread>
-#include <cstdio>
-
-#include <GL/glew.h>
-
 #include "Component/Window.hpp"
-
-using namespace std::chrono_literals;
 
 namespace piyo {
     Engine::~Engine() {
@@ -18,7 +10,6 @@ namespace piyo {
 
     void Engine::Run() {
         this->_shouldRun = true;
-        std::printf("window count: %d\n", this->_windowCount);
         while (this->_shouldRun && this->_windowCount != 0) {
             // Pre Update
             for (std::pair<unsigned int, Component *> pair : this->_components)
