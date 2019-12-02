@@ -94,8 +94,8 @@ namespace piyo {
 #if defined(__WAYLAND)
 #elif defined(__linux__)
         glXDestroyContext(this->_xDisplay, this->_xContext);
-        XUnmapWindow(this->_xDisplay, this->_xWindow);
         XDestroyWindow(this->_xDisplay, this->_xWindow);
+        XFlush(this->_xDisplay);
 #elif defined(_WIN32)
 #elif defined(__APPLE__)
 #endif
@@ -112,7 +112,6 @@ namespace piyo {
             switch (xEvent.type) {
                 case ClientMessage:
                     // Detected WM_DELETE_WINDOW
-                    std::printf("on destroy\n");
                     this->OnDestroy();
                     return;
                 default:
