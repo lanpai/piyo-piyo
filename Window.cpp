@@ -17,8 +17,6 @@ namespace piyo {
     }
 
     void Window::OnInit() {
-        std::printf("Initializing %s...\n", this->_name.c_str());
-
 #if defined(__WAYLAND)
         this->_display = DisplayType::WAYLAND;
 #elif defined(__linux__)

@@ -143,10 +143,7 @@ namespace piyo {
 
             virtual void OnPostUpdate() override;
 
-            void SetKeyState(KeyCode key, KeyState state) {
-                std::printf("code: %d %d\n", key, state);
-                this->_keyStates[key] = state;
-            };
+            void SetKeyState(KeyCode key, KeyState state) { this->_keyStates[key] = state; };
             KeyState GetKeyState(KeyCode key) { return this->_keyStates[key]; };
 
         private:
