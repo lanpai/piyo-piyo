@@ -4,7 +4,7 @@
 
 namespace piyo {
     Engine::~Engine() {
-        for (std::pair<unsigned int, Component *> pair : this->_components)
+        for (const std::pair<unsigned int, Component *> &pair : this->_components)
             pair.second->OnDestroy();
     }
 
