@@ -18,6 +18,7 @@ namespace piyo {
             case 76:    return KeyCode::F10;
             case 95:    return KeyCode::F11;
             case 96:    return KeyCode::F12;
+            case 49:    return KeyCode::Grave;
             case 10:    return KeyCode::Key1;
             case 11:    return KeyCode::Key2;
             case 12:    return KeyCode::Key3;
@@ -75,7 +76,19 @@ namespace piyo {
             case 64:    return KeyCode::LeftAlt;
             case 65:    return KeyCode::Space;
             case 108:   return KeyCode::RightAlt;
-            default:    return KeyCode::UNDEFINED;
+            case 105:   return KeyCode::RightCtrl;
+            case 118:   return KeyCode::Insert;
+            case 110:   return KeyCode::Home;
+            case 112:   return KeyCode::PageUp;
+            case 119:   return KeyCode::Delete;
+            case 115:   return KeyCode::End;
+            case 117:   return KeyCode::PageDown;
+            case 111:   return KeyCode::Up;
+            case 113:   return KeyCode::Left;
+            case 116:   return KeyCode::Down;
+            case 114:   return KeyCode::Right;
+            case 151:   return KeyCode::Function;
+            // Missing default case to throw a warning on missing case
         }
     }
 #elif defined(_WIN32)
