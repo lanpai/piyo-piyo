@@ -1,12 +1,6 @@
 #include "Component/Window.hpp"
 
-#if defined(__WAYLAND)
-#elif defined(__linux__)
-#elif defined(_WIN32)
-#elif defined(__APPLE__)
-#else
-    #error "Could not detect OS during compile-time!"
-#endif
+#include <X11/XKBlib.h>
 
 #include <cstdio>
 
@@ -17,7 +11,8 @@ namespace piyo {
         : Component("Window", ComponentType::WINDOW)
         , _windowName(windowName)
         , _width(width)
-        , _height(height) {
+        , _height(height)
+        , _input(nullptr) {
         // void
     }
 
@@ -36,6 +31,9 @@ namespace piyo {
             exit(0);
         }
 
+        // Disabling auto-repeat for display
+        XkbSetDetectableAutoRepeat(this->_xDisplay, true, nullptr);
+
         // Fetching the root window
         ::Window root = DefaultRootWindow(this->_xDisplay);
 
@@ -50,7 +48,7 @@ namespace piyo {
         // Setting window attributes
         XSetWindowAttributes setWinAttr;
         setWinAttr.colormap = XCreateColormap(this->_xDisplay, root, visualInfo->visual, AllocNone);
-        setWinAttr.event_mask = ExposureMask | KeyPressMask | PointerMotionMask;
+        setWinAttr.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask | PointerMotionMask;
 
         // Creating the window
         this->_xWindow = XCreateWindow(
@@ -114,6 +112,19 @@ namespace piyo {
                     // Detected WM_DELETE_WINDOW
                     this->OnDestroy();
                     return;
+                case KeyPress:
+                case KeyRelease:
+                    if (this->_input != nullptr) {
+                        KeyCode code = TranslateKeyCode(xEvent.xkey.keycode);
+
+                        if (xEvent.type == KeyPress) {
+                            if (this->_input->GetKeyState(code) == KeyState::UP)
+                                this->_input->SetKeyState(code, KeyState::PRESSED);
+                        }
+                        else
+                            this->_input->SetKeyState(code, KeyState::RELEASED);
+                    }
+                    break;
                 default:
                     break;
             }

@@ -11,8 +11,8 @@
     #error "Could not detect OS during compile-time!"
 #endif
 
-
 #include "../Component.hpp"
+#include "Input.hpp"
 
 namespace piyo {
     enum class DisplayType {
@@ -36,6 +36,8 @@ namespace piyo {
             void SwapBuffers();
             void MakeContextCurrent();
 
+            void SetInput(Input *input) { this->_input = input; };
+
         private:
             std::string _windowName;
             int _width, _height;
@@ -50,5 +52,7 @@ namespace piyo {
 #elif defined(_WIN32)
 #elif defined(__APPLE__)
 #endif
+
+            Input *_input;
     };
 }

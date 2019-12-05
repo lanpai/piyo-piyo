@@ -6,15 +6,18 @@ namespace piyo {
     class Engine;
 
     enum class ComponentType {
-        DEFAULT,
-        WINDOW
+        USER,
+        WINDOW,
+        INPUT
     };
 
     class Component {
         friend Engine;
 
         public:
-            Component(const std::string& name, ComponentType type) : _name(name), _type(type) {};
+            Component(const std::string& name, ComponentType type = ComponentType::USER)
+                : _name(name)
+                , _type(type) {};
 
             void SetParent(Engine *parent, unsigned int id);
 
@@ -30,8 +33,8 @@ namespace piyo {
             virtual void OnPreDraw() {};
             virtual void OnPostDraw() {};
 
-            std::string _name = "Component";
-            ComponentType _type = ComponentType::DEFAULT;
+            std::string _name;
+            ComponentType _type;
 
             Engine *_parent;
             unsigned int _id;
