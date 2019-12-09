@@ -42,6 +42,9 @@ namespace piyo {
             std::string _windowName;
             int _width, _height;
 
+            static int _windowCount;
+            static bool _isGlewInitialized;
+
             DisplayType _display;
 
 #if defined(__WAYLAND)

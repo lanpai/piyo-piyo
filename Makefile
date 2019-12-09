@@ -20,7 +20,7 @@ endif
 
 BINARY := piyo-piyo
 HEADER_DIR := piyo-piyo
-OBJS := Component.o Input.o Window.o Engine.o main.o
+OBJS := GLShader.o Vector.o Component.o Input.o Window.o Engine.o main.o
 OBJS_C :=
 
 ifeq ($(OS),Windows_NT)
@@ -31,7 +31,7 @@ else
 		ifneq ($(WAYLAND_DISPLAY),)
 			CCFLAGS += -D__WAYLAND
 		else
-			LIB += -lX11 -lGLX -lGL
+			LIB += -lX11 -lGLX -lGL -lGLEW
 		endif
 	else ifeq ($(UNAME_S),Darwin)
 

@@ -10,12 +10,13 @@ namespace piyo {
 
     void Engine::Run() {
         this->_shouldRun = true;
-        while (this->_shouldRun && this->_windowCount != 0) {
+        while (this->_shouldRun) {
             // Pre Update
             for (std::pair<unsigned int, Component *> pair : this->_components)
                 pair.second->OnPreUpdate();
 
-            // Update current scene here
+            if (this->_currentScene != nullptr)
+                this->_currentScene->OnUpdate();
 
             // Post Update
             for (std::pair<unsigned int, Component *> pair : this->_components)
@@ -25,7 +26,8 @@ namespace piyo {
             for (std::pair<unsigned int, Component *> pair : this->_components)
                 pair.second->OnPreDraw();
 
-            // Draw current scene here
+            if (this->_currentScene != nullptr)
+                this->_currentScene->OnDraw();
 
             // Post Draw
             for (std::pair<unsigned int, Component *> pair : this->_components)
@@ -34,14 +36,6 @@ namespace piyo {
     }
 
     void Engine::AddComponent(Component *component) {
-        switch (component->GetType()) {
-            case ComponentType::WINDOW:
-                this->_windowCount++;
-                break;
-            default:
-                break;
-        }
-
         unsigned int newId;
         if (this->_components.size() == 0)
             newId = 0;
@@ -54,9 +48,14 @@ namespace piyo {
     }
 
     void Engine::RemoveComponent(unsigned int id) {
-        if (this->_components.at(id)->GetType() == ComponentType::WINDOW)
-            this->_windowCount--;
-
         this->_components.erase(id);
+    }
+
+    void Engine::SwitchScene(Scene *scene) {
+        if (this->_currentScene != nullptr)
+            this->_currentScene->OnDestroy();
+        this->_currentScene = scene;
+        scene->_parent = this;
+        scene->OnInit();
     }
 }

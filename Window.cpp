@@ -1,6 +1,11 @@
 #include "Component/Window.hpp"
 
+#if defined(__WAYLAND)
+#elif defined(__linux__)
 #include <X11/XKBlib.h>
+#elif defined(_WIN32)
+#elif defined(__APPLE__)
+#endif
 
 #include <cstdio>
 
@@ -79,11 +84,21 @@ namespace piyo {
         // Mapping the window and enabling the context
         XMapWindow(this->_xDisplay, this->_xWindow);
         this->MakeContextCurrent();
+
+        if (!this->_isGlewInitialized) {
+            GLenum err = glewInit();
+            if (err != GLEW_OK)
+                std::fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+            std::printf("%s\n", glGetString(GL_VERSION));
+            this->_isGlewInitialized = true;
+        }
 #elif defined(_WIN32)
         this->_display = DisplayType::WIN;
 #elif defined(__APPLE__)
         this->_display = DisplayType::DARWIN;
 #endif
+
+        this->_windowCount++;
     }
 
     void Window::OnDestroy() {
@@ -92,6 +107,10 @@ namespace piyo {
         glXDestroyContext(this->_xDisplay, this->_xContext);
         XDestroyWindow(this->_xDisplay, this->_xWindow);
         XFlush(this->_xDisplay);
+
+        this->_windowCount--;
+        if (this->_windowCount == 0)
+            this->_parent->Stop();
 #elif defined(_WIN32)
 #elif defined(__APPLE__)
 #endif
@@ -169,4 +188,7 @@ namespace piyo {
 #elif defined(__APPLE__)
 #endif
     }
+
+    int Window::_windowCount = 0;
+    bool Window::_isGlewInitialized = false;
 }
