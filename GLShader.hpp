@@ -3,6 +3,7 @@
 #include <string>
 
 #include "Type/Vertex.hpp"
+#include "Object/Mesh.hpp"
 
 namespace piyo {
     struct GLProgramSource {
@@ -18,18 +19,9 @@ namespace piyo {
             void Use();
             void Unuse();
 
-            void Render();
-
-            unsigned int AddVertex(const Vertex3 &vertex);
-            void AddIndex(unsigned int index);
+            void Render(const Mesh &mesh);
 
         private:
             unsigned int _programID;
-            unsigned int _vaoID, _vboID, _iboID;
-
-            Vertex3 *_vertices;
-            unsigned int *_indices;
-
-            unsigned int _numVertices, _numIndices;
     };
 }

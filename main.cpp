@@ -38,32 +38,34 @@ class TestScene : public piyo::Scene {
                 }
             )";
             this->_shader = new piyo::GLShader(source);
-        }
-        virtual void OnDestroy() override {
-            delete this->_shader;
-        }
-        virtual void OnUpdate() override {
+
             piyo::Vertex3 a = piyo::Vertex3();
             piyo::Vertex3 b = piyo::Vertex3();
             piyo::Vertex3 c = piyo::Vertex3();
 
             a.position = piyo::Vector3(0.0f, 0.0f, 0.0f);
             a.color = piyo::Color(255, 0, 0, 0);
-            b.position = piyo::Vector3(2.0f, 1.0f, 0.0f);
+            b.position = piyo::Vector3(1.0f, 1.0f, 0.0f);
             b.color = piyo::Color(0, 255, 0, 0);
             c.position = piyo::Vector3(1.0f, 0.0f, 0.0f);
             c.color = piyo::Color(0, 0, 255, 0);
 
-            this->_shader->AddIndex(this->_shader->AddVertex(a));
-            this->_shader->AddIndex(this->_shader->AddVertex(c));
-            this->_shader->AddIndex(this->_shader->AddVertex(b));
+            this->_mesh.AddIndex(this->_mesh.AddVertex(a));
+            this->_mesh.AddIndex(this->_mesh.AddVertex(c));
+            this->_mesh.AddIndex(this->_mesh.AddVertex(b));
+        }
+        virtual void OnDestroy() override {
+            delete this->_shader;
+        }
+        virtual void OnUpdate() override {
         }
         virtual void OnDraw() override {
-            this->_shader->Render();
+            this->_shader->Render(this->_mesh);
         }
 
     private:
         piyo::GLShader *_shader;
+        piyo::Mesh _mesh;
 };
 
 int main(int argc, char* argv[]) {

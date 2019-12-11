@@ -3,15 +3,23 @@
 #include "../Type/Vertex.hpp"
 
 namespace piyo {
-    struct Mesh {
-        Mesh()
-            : vertices(new Vertex3[0]), indices(new unsigned int[0]) {}
-        ~Mesh() {
-            delete[] this->vertices;
-            delete[] this->indices;
-        }
+    class GLShader;
 
-        Vertex3 *vertices;
-        unsigned int *indices;
+    class Mesh {
+        friend GLShader;
+
+        public:
+            Mesh();
+            ~Mesh();
+
+            unsigned int AddVertex(const Vertex3 &vertex);
+            void AddIndex(unsigned int index);
+
+        private:
+            unsigned int _vaoID, _vboID, _iboID;
+            unsigned int _numVertices, _numIndices;
+
+            Vertex3 *_vertices;
+            unsigned int *_indices;
     };
 }
