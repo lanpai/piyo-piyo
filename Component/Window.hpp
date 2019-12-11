@@ -42,6 +42,8 @@ namespace piyo {
             std::string _windowName;
             int _width, _height;
 
+            bool _shouldClose = false;
+
             static int _windowCount;
             static bool _isGlewInitialized;
 

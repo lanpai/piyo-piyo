@@ -127,7 +127,7 @@ namespace piyo {
             switch (xEvent.type) {
                 case ClientMessage:
                     // Detected WM_DELETE_WINDOW
-                    this->OnDestroy();
+                    this->_shouldClose = true;
                     return;
                 case KeyPress:
                 case KeyRelease:
@@ -159,6 +159,9 @@ namespace piyo {
     void Window::OnPostDraw() {
         this->MakeContextCurrent();
         this->SwapBuffers();
+
+        if (this->_shouldClose)
+            this->OnDestroy();
     }
 
     void Window::Clear(float r, float g, float b, float a) {
