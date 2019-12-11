@@ -15,6 +15,14 @@ namespace piyo {
             GLShader(const GLProgramSource &source);
             ~GLShader();
 
+            void Use();
+            void Unuse();
+
+            void Render();
+
+            unsigned int AddVertex(const Vertex3 &vertex);
+            void AddIndex(unsigned int index);
+
         private:
             unsigned int _programID;
             unsigned int _vaoID, _vboID, _iboID;
