@@ -29,10 +29,8 @@ namespace piyo {
 
         // Fetching X display
         this->_xDisplay = XOpenDisplay(NULL);
-        if (this->_xDisplay == NULL) {
-            std::printf("Could not connect to X server\n");
-            exit(0);
-        }
+        if (this->_xDisplay == NULL)
+            std::fprintf(stderr, "Could not connext to X server\n");
 
         // Disabling auto-repeat for display
         XkbSetDetectableAutoRepeat(this->_xDisplay, true, nullptr);
@@ -41,12 +39,10 @@ namespace piyo {
         ::Window root = DefaultRootWindow(this->_xDisplay);
 
         XVisualInfo *visualInfo;
-        GLint attr[] = { GLX_RGBA, GLX_DOUBLEBUFFER, None };
+        GLint attr[] = { GLX_RGBA, GLX_DOUBLEBUFFER, True, GLX_DEPTH_SIZE, 16, None };
         visualInfo = glXChooseVisual(this->_xDisplay, 0, attr);
-        if (visualInfo == NULL) {
-            std::printf("No appropriate visual found\n");
-            exit(0);
-        }
+        if (visualInfo == NULL)
+            std::fprintf(stderr, "No appropriate visual found\n");
 
         // Setting window attributes
         XSetWindowAttributes setWinAttr;
@@ -76,10 +72,8 @@ namespace piyo {
 
         // Creating OpenGL context
         this->_xContext = glXCreateContext(this->_xDisplay, visualInfo, NULL, GL_TRUE);
-        if (this->_xContext == NULL) {
-            std::printf("Failed to create rendering context\n");
-            exit(0);
-        }
+        if (this->_xContext == NULL)
+            std::fprintf(stderr, "Failed to create rendering context\n");
 
         // Mapping the window and enabling the context
         XMapWindow(this->_xDisplay, this->_xWindow);
@@ -92,6 +86,10 @@ namespace piyo {
             std::printf("%s\n", glGetString(GL_VERSION));
             this->_isGlewInitialized = true;
         }
+
+        // Enable depth testing
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
 #elif defined(_WIN32)
         this->_display = DisplayType::WIN;
 #elif defined(__APPLE__)
@@ -186,7 +184,8 @@ namespace piyo {
     void Window::MakeContextCurrent() {
 #if defined(__WAYLAND)
 #elif defined(__linux__)
-        glXMakeCurrent(this->_xDisplay, this->_xWindow, this->_xContext);
+        if (!glXMakeCurrent(this->_xDisplay, this->_xWindow, this->_xContext))
+            std::fprintf(stderr, "Could not make context current\n");
 #elif defined(_WIN32)
 #elif defined(__APPLE__)
 #endif

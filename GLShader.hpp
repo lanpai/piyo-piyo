@@ -21,6 +21,8 @@ namespace piyo {
 
             void Render(const Mesh &mesh);
 
+            void UniformMatrix4fv(const char *name, const float *value);
+
         private:
             unsigned int _programID;
     };

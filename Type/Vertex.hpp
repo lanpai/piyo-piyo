@@ -6,13 +6,13 @@
 namespace piyo {
     struct Vertex3 {
         Vertex3()
-            : position(Vector3()), color(Color()), uv(Vector2()), normal(Vector3()) {}
-        Vertex3(const Vector3 &position, const Color &color, const Vector2 &uv, const Vector3& normal)
+            : position(Vec3()), color(Color()), uv(Vec2()), normal(Vec3()) {}
+        Vertex3(const Vec3 &position, const Color &color, const Vec2 &uv, const Vec3& normal)
             : position(position), color(color), uv(uv), normal(normal) {}
 
-        Vector3 position;
+        Vec3 position;
         Color color;
-        Vector2 uv;
-        Vector3 normal;
+        Vec2 uv;
+        Vec3 normal;
     };
 }

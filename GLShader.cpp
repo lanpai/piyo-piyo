@@ -106,4 +106,9 @@ namespace piyo {
 
         this->Unuse();
     }
+
+    void GLShader::UniformMatrix4fv(const char *name, const float *value) {
+        this->Use();
+        glUniformMatrix4fv(glGetUniformLocation(this->_programID, name), 1, GL_FALSE, value);
+    }
 }

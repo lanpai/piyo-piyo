@@ -20,7 +20,7 @@ endif
 
 BINARY := piyo-piyo
 HEADER_DIR := piyo-piyo
-OBJS := Mesh.o GLShader.o Vector.o Component.o Input.o Window.o Engine.o main.o
+OBJS := Mesh.o GLShader.o Matrix.o Vector.o Component.o Input.o Window.o Engine.o main.o
 OBJS_C :=
 
 ifeq ($(OS),Windows_NT)
