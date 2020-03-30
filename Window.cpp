@@ -151,7 +151,7 @@ namespace piyo {
 
     void Window::OnPreDraw() {
         this->MakeContextCurrent();
-        this->Clear(0.0f, 1.0f, 0.0f, 1.0f);
+        this->Clear(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
     void Window::OnPostDraw() {
