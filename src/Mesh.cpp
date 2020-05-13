@@ -1,7 +1,8 @@
 #include "Object/Mesh.hpp"
 
-#include <GL/glew.h>
 #include <cstdio>
+
+#include "GL/glew.h"
 
 namespace piyo {
     Mesh::Mesh() {

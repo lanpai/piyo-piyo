@@ -1,6 +1,6 @@
 #include "GLShader.hpp"
 
-#include <GL/glew.h>
+#include "GL/glew.h"
 
 namespace piyo {
     unsigned int CompileShader(unsigned int type, const std::string &source) {
